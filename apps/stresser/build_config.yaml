@@ -8,13 +8,10 @@ spec:
     git:
       uri: "https://github.com/gshefer/CMapps"
     dockerfile: "apps/stresser"
-  strategy: 
-    type: "Source"
-    sourceStrategy:
-      from:
-        kind: "ImageStreamTag"
-        name: "stresser:latest"
+  strategy:
+    dockerStrategy:
+      dockerfilePath: "apps/stresser"
   output: 
     to:
       kind: "ImageStreamTag"
-      name: "stresser:latest"
+      name: "docker-registry.default.svc:5000/test/stresser:latest"
