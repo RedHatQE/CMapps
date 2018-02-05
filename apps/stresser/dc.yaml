@@ -11,6 +11,7 @@ spec:
       containers:
         - name: "stresser"
           image: "stresser:latest"
+          command: ["stress", "--cpu", "2", "--io", "1", "--vm", "1", "--vm-bytes", "128M"]
           ports:
             - containerPort: 8080
               protocol: "TCP"
