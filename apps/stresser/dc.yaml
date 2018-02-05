@@ -1,0 +1,31 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "stresser"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "stresser"
+    spec:
+      containers:
+        - name: "stresser"
+          image: "stresser:latest"
+          ports:
+            - containerPort: 8080
+              protocol: "TCP"
+  replicas: 5 
+  selector:
+    name: "stresser"
+  triggers:
+    - type: "ConfigChange" 
+    - type: "ImageChange" 
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - "stresser"
+        from:
+          kind: "ImageStreamTag"
+          name: "stresser:latest"
+  strategy: 
+    type: "Rolling"
