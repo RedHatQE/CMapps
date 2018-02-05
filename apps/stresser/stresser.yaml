@@ -1,0 +1,70 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "stresser-template"
+parameters:
+  - name: PROJECT_NAME 
+    description: "The project name"
+    required: true
+objects:
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      generation: 1
+      name: fedora
+      namespace: ${PROJECT_NAME}
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+      - annotations: null
+        from:
+          kind: DockerImage
+          name: fedora:latest
+        generation: 1
+        name: latest
+        referencePolicy:
+          type: Source
+    status:
+      dockerImageRepository: docker-registry.default.svc:5000/${PROJECT_NAME}/fedora
+      tags:
+      - items:
+        tag: latest
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      generation: 1
+      labels:
+        app: stresser
+      name: stresser
+      namespace: "${PROJECT_NAME}"
+    spec:
+      lookupPolicy:
+        local: false
+    status:
+      dockerImageRepository: "docker-registry.default.svc:5000/${PROJECT_NAME}/stresser"
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: cakephp-mysql-example
+      labels:
+        app: stresser
+      name: stresser
+      namespace: "${PROJECT_NAME}"
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: stresser:latest
+      source:
+        contextDir: apps/stresser
+        git:
+          uri: https://github.com/gshefer/CMapps.git
+        type: Git
+      runPolicy: Serial
+      strategy:
+        dockerStrategy:
+          from:
+            kind: ImageStreamTag
+            name: fedora:latest
+        type: Docker
