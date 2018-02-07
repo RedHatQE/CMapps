@@ -84,7 +84,7 @@ objects:
           containers:
             - name: "stresser"
               image: "stresser:latest"
-              command: ["stress", "--cpu", "2", "--io", "1", "--vm", "1", "--vm-bytes", "128M"]
+              command: ["stress", "--cpu", "1", "--io", "1", "--vm", "1", "--vm-bytes", "2G"]
               ports:
                 - containerPort: 8080
                   protocol: "TCP"
