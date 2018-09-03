@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: test-project-dashboard
+  annotations:
+    description: "Test project use for checking the CFME Containers Project Dashboard"
+    iconClass: "icon-openshift"
+    tags: "webserver,tomcat"
+parameters:
+- name: IMAGE_WEBSERVER30_TOMCAT7_OPENSHIFT
+  description: The location of the jboss-webserver-3/webserver30-tomcat7-openshift image
+  value: registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat7-openshift
+  required: true
+- name: IMAGE_WEBSERVER30_TOMCAT8_OPENSHIFT
+  description: The location of the jboss-webserver-3/webserver30-tomcat8-openshift image
+  value: registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift
+  required: true
+- name: IMAGE_WEBSERVER31_TOMCAT7_OPENSHIFT
+  description: The location of the jboss-webserver-3/webserver31-tomcat7-openshift image
+  value: registry.access.redhat.com/jboss-webserver-3/webserver31-tomcat7-openshift:latest
+  required: true
+- name: IMAGE_WEBSERVER31_TOMCAT8_OPENSHIFT
+  description: The location of the jboss-webserver-3/webserver30-tomcat8-openshift image
+  value: registry.access.redhat.com/jboss-webserver-3/webserver31-tomcat8-openshift
+  required: true
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: jboss-web30-tomcat7
+    labels:
+      app: jboss-web30-tomcat7
+  spec:
+    containers:
+    - name: jboss-web30-tomcat7
+      image: ${IMAGE_WEBSERVER30_TOMCAT7_OPENSHIFT}
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: jboss-web30-tomcat7-1
+    labels:
+      app: jboss-web30-tomcat7-1
+  spec:
+    containers:
+    - name: jboss-web30-tomcat7-1
+      image: ${IMAGE_WEBSERVER30_TOMCAT7_OPENSHIFT}
+      ports:
+      - containerPort: 80
+        protocol: TCP
+    - name: jboss-web30-tomcat8-1
+      image: ${IMAGE_WEBSERVER30_TOMCAT8_OPENSHIFT}
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: jboss-web30-tomcat8
+    labels:
+      app: jboss-webx-tomcat8
+  spec:
+    containers:
+    - name: jboss-web30-tomcat8
+      image: ${IMAGE_WEBSERVER30_TOMCAT8_OPENSHIFT}
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: jboss-web31-tomcat7
+    labels:
+      app: jboss-web31-tomcat7
+  spec:
+    containers:
+    - name: jboss-web31-tomcat7
+      image: ${IMAGE_WEBSERVER31_TOMCAT7_OPENSHIFT}
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: jboss-web31-tomcat8
+    labels:
+      app: jboss-web3x-tomcat8
+  spec:
+    containers:
+    - name: jboss-web31-tomcat8
+      image: ${IMAGE_WEBSERVER31_TOMCAT8_OPENSHIFT}
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: jboss-web-tomcat8
+  spec:
+    selector:
+      app: jboss-web3x-tomcat8
+    portalIP:
+    ports:
+    - nodePort: 0
+      port: 80
+      protocol: TCP
+      targetPort: 80
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: project-dashboard-quota
+  spec:
+    hard:
+      memory: 1Gi
+      cpu: 20
+      pods: 10
+      services: 5
+      replicationcontrollers: 5
+      resourcequotas: 3
+labels:
